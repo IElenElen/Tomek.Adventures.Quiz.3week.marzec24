@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>Tomek.Adventures.Quiz._3week.marzec24</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tomek.Adventures.Quiz.3week.marzec24.App\Tomek.Adventures.Quiz.3week.marzec24.App.csproj" />
+  </ItemGroup>
+
+</Project>
