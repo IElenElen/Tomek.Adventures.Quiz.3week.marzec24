@@ -12,7 +12,7 @@ namespace Tomek.Adventures.Quiz._3week.marzec24
          3. Osobne funkcje mendżerów, serwisów, posegregowane entity
          4. Wprowadzona klasa do odmierzania czasu
          5. Możliwość zakończenia quizu przed czasem
-        Problem: w jednej linii mam upływający czas i odpowiedź od użytkownika - masakra
+        Problem: w jednej linii mam upływający czas i odpowiedź od użytkownika
         */
     {
         static void Main(string[] args)
