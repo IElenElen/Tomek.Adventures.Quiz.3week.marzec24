@@ -18,14 +18,13 @@ namespace Tomek.Adventures.Quiz._3week.marzec24.App.ManagerApp
             {
                 keyInfo = Console.ReadKey();
                 userChoice = char.ToLower(keyInfo.KeyChar);
+                Console.WriteLine();
 
                 // Dodatkowa walidacja wyboru użytkownika
                 if (userChoice != 'a' && userChoice != 'b' && userChoice != 'c')
                 {
+                    Console.WriteLine("Nieprawidłowy wybór. Spróbuj ponownie. Twój wybór. Wpisz a, b lub c: ");
                     Console.WriteLine();
-                    Console.WriteLine("Nieprawidłowy wybór. Spróbuj ponownie.");
-                    Console.WriteLine();
-                    Console.Write("Twój wybór (wpisz a, b lub c): ");
                 }
             } while (userChoice != 'a' && userChoice != 'b' && userChoice != 'c');
 

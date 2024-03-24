@@ -6,13 +6,13 @@ namespace Tomek.Adventures.Quiz._3week.marzec24
     public class Program
         /* Moje notatki: 
          
-         Póki co poprawa dla 3 tygodnia, refaktoryzacja czyli 
-         1. Podział na projekty: dodanie bibliotek app i domain
-         2. Stworzenie interfejsu w folderze Abstrakt, dodana klasa bazowa
-         3. Poukładałam klasy z kodami (wcześniej pomieszałam) - osobne funkcje mendżerów, serwisów, posegregowane entity, klasa dla "future" administratora
-         4. Chcę wprowadzić serwis odpowiedzialny za pilnowanie czasu dla odpowiedzi, ale póki co kijowo mi to idzie 
-            zatem trzeba na razie odpuscić :-) Tylko czy ma sens liczenie czasu i pokazywanie umykajacego paska "####"??? 
-            Czy zostawić tylko odmierzanie czasu??? Zastanowić się
+         Moduł nr 3 tj. refaktoryzacja:
+         1. Projekty: oprócz głównego - biblioteki app i domain
+         2. Interfejs
+         3. Osobne funkcje mendżerów, serwisów, posegregowane entity
+         4. Wprowadzona klasa do odmierzania czasu
+         5. Możliwość zakończenia quizu przed czasem
+        Problem: w jednej linii mam upływający czas i odpowiedź od użytkownika
         */
     {
         static void Main(string[] args)
@@ -21,22 +21,20 @@ namespace Tomek.Adventures.Quiz._3week.marzec24
             Console.WriteLine("Cześć. Fascynują Cię przygody Tomka z cyklu powieści autorstwa A. Szklarskiego? Jeśli tak :-), zapraszam do zabawy.");
             Console.WriteLine("Oto quiz. Tylko jedna odpowiedź jest poprawna: a, b lub c, nagrodzona 1 punktem.");
 
-            /* Console.WriteLine("Zapoznaj się z treścią kolejnych pytań i nie zwlekaj z odpowiedzią.
-            /Masz 2 minuty, by wybrać poprawną odpowiedź"); */
+            Console.WriteLine("Zapoznaj się z treścią kolejnych pytań i nie zwlekaj z odpowiedzią.");
+            Console.WriteLine("Masz dwie i pół minuty, aby wybrać poprawną odpowiedź.");
+            Console.WriteLine();
 
             // Inicjalizuję obiekty dla pytań, wyborów i weryfikacji odpowiedzi oraz dla czasu
 
             QuestionsManagerApp questionsManagerApp = new QuestionsManagerApp();
-
-            /* 2 linie z pomysłu - do analizy i poprawy:
-             TimeSpan userDefinedTime = TimeSpan.FromSeconds(120);
-            /TimeMeasuringServiceApp timeMeasuringServiceApp = new TimeMeasuringServiceApp(userDefinedTime); */
-
             ChoicesManagerApp choicesManagerApp = new ChoicesManagerApp();
             AnswerVerifierServiceApp answerVerifierServiceApp = new AnswerVerifierServiceApp();
 
             // Zmienna przechowująca łączną liczbę punktów uzyskanych przez użytkownika
             int totalPoints = 0;
+
+            var timeService = new App.ServiceApp.TimeMeasuringServiceApp(); //odwołanie do serwisu dla czasu
 
             // Tworzę pętlę przechodzącą przez każde pytanie w zestawie
             for (int i = 0; i < questionsManagerApp.Questions.Count; i++)
@@ -52,58 +50,60 @@ namespace Tomek.Adventures.Quiz._3week.marzec24
                 {
                     Console.WriteLine($"{choice.ChoiceLetter}: {choice.ChoiceContent}");
                 }
+                Console.WriteLine();
 
-                /* planowany: timeMeasuringServiceApp.StartMeasurement(); mierzę czas */
+                timeService.StartTimer();
 
+                Console.WriteLine();
                 // Pobieranie wyboru od użytkownika
                 UsersManagerApp usersService = new UsersManagerApp();
                 char userChoice = usersService.GetUserChoice();
 
-                /* w planie: timeMeasuringServiceApp.StopMeasurement();
-                // Czekaj na odpowiedź użytkownika
+                Console.WriteLine();
 
-                // W przypadku przekroczenia czasu na odpowiedź
+                timeService.StopTimer();
 
-                int elapsedSeconds = (int)timeMeasuringServiceApp.ElapsedTime.TotalSeconds;
-                if (elapsedSeconds >= (int)userDefinedTime.TotalSeconds)
+                if (i < questionsManagerApp.Questions.Count - 1)
                 {
-                    Console.WriteLine("Czas na odpowiedź minął.");
-
-                    timeMeasuringServiceApp.Reset();
-                    continue;
+                    timeService.ResetTimer(); //nowy czas dla każdego pytania
                 }
-
-                // Zatrzymaj pasek postępu - w planach Do Analizy */
-
                 Console.WriteLine();
 
                 // Następuje weryfikacja odpowiedzi i przyznawanie punktów
                 bool result = answerVerifierServiceApp.GetPointsForAnswer(question.QuestionNumber, userChoice);
+                Console.WriteLine();
 
                 // Wyświetlanie informacji o poprawności odpowiedzi
                 if (result)
                 {
                     totalPoints++;
                     Console.WriteLine("Poprawna odpowiedź. Zdobywasz 1 punkt.");
+                    Console.WriteLine();
                 }
                 else
                 {
                     Console.WriteLine("Odpowiedź błędna. Brak punktu.");
+                    Console.WriteLine();
                 }
 
                 if (i < questionsManagerApp.Questions.Count - 1)
                 {
-                    Console.WriteLine($"Aktualna liczba punktów: {totalPoints}");
+                    Console.WriteLine($"Aktualna liczba punktów: {totalPoints}"); //bieżące zliczanie punktów
                     Console.WriteLine();
                     Console.WriteLine("Naciśnij Enter, aby przejść do kolejnego pytania.");
-                    // Czekanie na gotowość użytkownika przed przejściem do następnego pytania (jeśli nie jest to ostatnie pytanie)
+                    Console.WriteLine();
+                    Console.WriteLine("Jeżeli zaś chcesz zakończyć zabawę z quiz naciśnij k."); //zakończenie quizu na żądanie
+                    string? userInputX = Console.ReadLine();
+
+                    if(userInputX == "k" || userInputX == "K")
+                    {
+                        Console.WriteLine("Quiz został zatrzymany. Do zobaczenia.");
+                        break;
+                    }
+
                     Console.ReadLine();
                     Console.WriteLine();
                 }
-                /* w planie Task.Delay(1000).Wait();
-
-                userDefinedTime = userDefinedTime.Subtract(TimeSpan.FromSeconds(elapsedSeconds));
-                timeMeasuringServiceApp.Reset(); do analizy */
             }
             Console.WriteLine($"Twój wynik końcowy: {totalPoints} pkt.");  // Wyświetlanie końcowego wyniku 
         }
